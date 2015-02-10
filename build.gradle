@@ -1,3 +1,5 @@
+group = "com.techshroom"
+version = "1.0.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven {
@@ -13,4 +15,13 @@ dependencies {
     compile group: 'com.jcabi', name: 'jcabi-github', version: '0.14'
     compile group: 'com.jimdo.gradle', name: 'gradle-apt-plugin', version: '0.5+'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
+}
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: file("../Techshroom.github.io/downloads/maven").toURI().toURL())
+        }
+    }
 }
