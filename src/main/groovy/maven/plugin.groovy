@@ -6,20 +6,22 @@ class plugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("mavencfg", PluginExtension)
         project.apply plugin: 'maven'
-        if (project.mavencfg.gitio) {
-            project.uploadArchives {
-                repositories {
-                    mavenDeployer {
-                        repository(url: file("../Techshroom.github.io/downloads/maven").toURI().toURL())
+        project.afterEvaluate {
+            if (project.mavencfg.gitio) {
+                project.uploadArchives {
+                    repositories {
+                        mavenDeployer {
+                            repository(url: file("../Techshroom.github.io/downloads/maven").toURI().toURL())
+                        }
                     }
                 }
             }
-        }
-        project.mavencfg.otherLocations.each {
-            project.uploadArchives {
-                repositories {
-                    mavenDeployer {
-                        repository(url: it)
+            project.mavencfg.otherLocations.each {
+                project.uploadArchives {
+                    repositories {
+                        mavenDeployer {
+                            repository(url: it)
+                        }
                     }
                 }
             }
