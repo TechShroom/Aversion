@@ -1,5 +1,19 @@
 group = "com.techshroom"
 version = "1.0.0-SNAPSHOT"
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url "http://techshroom.github.io/downloads/maven"
+        }
+    }
+    dependencies {
+        classpath group: 'com.techshroom', name: 'Aversion', version: '1.0.0-SNAPSHOT'
+    }
+}
 repositories {
     mavenCentral()
     maven {
@@ -16,12 +30,8 @@ dependencies {
     compile group: 'com.jimdo.gradle', name: 'gradle-apt-plugin', version: '0.5+'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
 }
-apply plugin: 'maven'
+apply plugin: 'aversion-maven'
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: file("../Techshroom.github.io/downloads/maven").toURI().toURL())
-        }
-    }
+mavencfg {
+    gitio = true
 }
