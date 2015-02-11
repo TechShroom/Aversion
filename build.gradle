@@ -1,5 +1,5 @@
 group = "com.techshroom"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.1-SNAPSHOT"
 buildscript {
     repositories {
         mavenCentral()
@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'com.techshroom', name: 'Aversion', version: '1.0.0-SNAPSHOT'
+        classpath group: 'com.techshroom', name: 'Aversion', version: '1.0.1-SNAPSHOT'
     }
 }
 repositories {
