@@ -11,7 +11,7 @@ class plugin implements Plugin<Project> {
                 project.uploadArchives {
                     repositories {
                         mavenDeployer {
-                            repository(url: file("../Techshroom.github.io/downloads/maven").toURI().toURL())
+                            repository(url: project.file("../Techshroom.github.io/downloads/maven").toURI().toURL())
                         }
                     }
                 }
