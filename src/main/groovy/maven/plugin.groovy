@@ -7,7 +7,7 @@ class projectData {
     def List<String> otherLocations = []
 }
 
-public class plugin implements Plugin<Project> {
+class plugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("mavencfg", maven.projectData)
         project.apply plugin: 'maven'
