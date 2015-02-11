@@ -4,7 +4,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.artifacts.ProjectDependency
 class plugin implements Plugin<Project> {
     void apply(Project project) {
-        project.extensions.create("mavencfg", maven.projectData)
+        project.extensions.create("mavencfg", PluginExtension)
         project.apply plugin: 'maven'
         if (project.mavencfg.gitio) {
             project.uploadArchives {
