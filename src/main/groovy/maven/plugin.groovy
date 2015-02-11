@@ -15,7 +15,7 @@ class plugin implements Plugin<Project> {
                 }
             }
         }
-        project.mavencfg.otherLocations.all {
+        project.mavencfg.otherLocations.each {
             project.uploadArchives {
                 repositories {
                     mavenDeployer {
