@@ -8,7 +8,7 @@ class PluginExtension {
     boolean applyEclipseFix = true
     void apply(Project project, plugin plugin) {
         isMultiProject = !project.subprojects.isEmpty()
-        project.afterEvalute {
+        project.afterEvaluate {
             projectVersion = checkVersion(project)
             if (javaVersion == DEFAULT_VERSION) {
                 javaVersion = projectVersion["java"]
