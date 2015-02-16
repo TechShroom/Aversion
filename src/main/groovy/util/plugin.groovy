@@ -42,7 +42,7 @@ class plugin implements Plugin<Project> {
 
         // get the jdk rt.jar; or null if there is none
         ext.getJDKRT = { version ->
-            if (ext.hasProperty("JAVA6_HOME")) {
+            if (ext.hasProperty("JAVA$version_HOME")) {
                 return ext.property("JAVA$version_HOME") + "/jre/lib/rt.jar"
             }
             if (ext.hasProperty("JAVA_HOME") && System.getProperty("java.version").startsWith("1.$version")) {
