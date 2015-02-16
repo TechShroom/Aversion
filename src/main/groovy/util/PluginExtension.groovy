@@ -19,22 +19,21 @@ class PluginExtension {
             plugin.applyEclipseClasspathMod(project, this)
         }
     }
+    private JavaVersion merge(Object version) {
+        return (version instanceof JavaVersion) ? version : JavaVersion.toVersion(version)
+    }
     Object checkVersion(Project project) {
         def data = [:]
         if (project.plugins.hasPlugin("java")) {
             def cJava = project.tasks.getByName("compileJava")
-            data["java"] = [src: cJava.sourceCompatibility, target: cJava.targetCompatibility]
+            data["java"] = [src: merge(cJava.sourceCompatibility), target: merge(cJava.targetCompatibility)]
         }
         if (project.plugins.hasPlugin("eclipse")) {
             def jdt = project.eclipse.jdt
-            data["eclipse"] = [src: jdt.sourceCompatibility, target: jdt.targetCompatibility]
+            data["eclipse"] = [src: merge(jdt.sourceCompatibility), target: merge(jdt.targetCompatibility)]
         }
         if (data["java"] && data["eclipse"]) {
             if (data["java"] != data["eclipse"]) {
-                print data["java"]["src"].getClass()
-                print data["java"]["target"].getClass()
-                print data["eclipse"]["src"].getClass()
-                print data["eclipse"]["target"].getClass()
                 throw new InvalidUserDataException("Unequal java versions for " + data)
             }
         }
