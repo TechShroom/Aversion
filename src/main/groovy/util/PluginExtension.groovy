@@ -12,6 +12,9 @@ class PluginExtension {
             projectVersion = checkVersion(project)
             if (javaVersion == DEFAULT_VERSION) {
                 javaVersion = projectVersion["java"]
+            } else if (javaVersion instanceof CharSequence) {
+                def both = javaVersion.toString()
+                javaVersion = [src: both, target: both]
             }
             plugin.applyEclipseClasspathMod(project, this)
         }
