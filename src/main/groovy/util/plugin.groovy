@@ -23,13 +23,13 @@ class plugin implements Plugin<Project> {
             }
         }
         // return true if there is a property `prop` from Gradle, Java system properties, or environment, in that order.
-        ext.hasProperty = { prop ->
+        ext.ext.hasProperty = { prop ->
             def res = ext.property(prop)
             return res != null && res != ""
         }
 
         // get property from Gradle, Java system properties, or environment, in that order.
-        ext.property = { prop ->
+        ext.ext.property = { prop ->
             if (project.hasProperty(prop))
                 return project.property(prop)
             def res = System.getProperty(prop, null)
@@ -42,12 +42,12 @@ class plugin implements Plugin<Project> {
         }
 
         // true if we have a jdk rt.jar for the version
-        ext.hasJDKRT = { version ->
+        ext.ext.hasJDKRT = { version ->
             return ext.getJDKRT(version) != null
         }
 
         // get the jdk rt.jar; or null if there is none
-        ext.getJDKRT = { version ->
+        ext.ext.getJDKRT = { version ->
             if (ext.hasProperty("JAVA$version_HOME")) {
                 return ext.property("JAVA$version_HOME") + "/jre/lib/rt.jar"
             }
