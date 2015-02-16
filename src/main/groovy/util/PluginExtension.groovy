@@ -8,7 +8,6 @@ class PluginExtension {
     boolean applyEclipseFix = true
     void apply(Project project, plugin plugin) {
         isMultiProject = !project.subprojects.isEmpty()
-        assetName = 'upload-' + project.version + '.zip'
         project.afterEvalute {
             projectVersion = checkVersion(project)
             if (javaVersion == DEFAULT_VERSION) {
