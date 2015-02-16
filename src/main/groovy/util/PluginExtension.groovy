@@ -15,6 +15,8 @@ class PluginExtension {
             } else if (javaVersion instanceof CharSequence) {
                 def both = javaVersion.toString()
                 javaVersion = [src: both, target: both]
+            } else {
+                throw new InvalidUserDataException("Couldn't convert " + javaVersion + " to a list, class type " + javaVersion.getClass().name)
             }
             plugin.applyEclipseClasspathMod(project, this)
         }
