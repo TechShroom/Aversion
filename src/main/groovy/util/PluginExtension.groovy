@@ -5,6 +5,7 @@ class PluginExtension {
     def projectVersion = null
     String javaVersion = DEFAULT_VERSION // specific java version
     boolean isMultiProject = false
+    boolean applyEclipseFix = true
     void apply(Project project, plugin plugin) {
         isMultiProject = !project.subprojects.isEmpty()
         assetName = 'upload-' + project.version + '.zip'

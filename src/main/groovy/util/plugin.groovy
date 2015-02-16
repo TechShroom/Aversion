@@ -16,6 +16,12 @@ class plugin implements Plugin<Project> {
     void apply(Project project) {
         def ext = project.extensions.create('util', PluginExtension)
         ext.apply(project, this)
+        project.afterEvaluate {
+            if (ext.applyEclipseFix) {
+                // eclipse bug workaround
+                project.tasks.eclipse.dependsOn('cleanEclipse')
+            }
+        }
         // return true if there is a property `prop` from Gradle, Java system properties, or environment, in that order.
         ext.hasProperty = { prop ->
             def res = ext.property(prop)
