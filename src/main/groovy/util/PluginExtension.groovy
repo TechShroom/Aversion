@@ -31,6 +31,10 @@ class PluginExtension {
         }
         if (data["java"] && data["eclipse"]) {
             if (data["java"] != data["eclipse"]) {
+                print data["java"]["src"].getClass()
+                print data["java"]["target"].getClass()
+                print data["eclipse"]["src"].getClass()
+                print data["eclipse"]["target"].getClass()
                 throw new InvalidUserDataException("Unequal java versions for " + data)
             }
         }
