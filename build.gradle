@@ -40,6 +40,16 @@ repositories {
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
 
+def compat = '1.6'
+compileJava {
+    targetCompatibility = compat
+    sourceCompatibility = compat
+}
+compileGroovy {
+    targetCompatibility = compat
+    sourceCompatibility = compat
+}
+
 dependencies {
     compile localGroovy()
     // we _would_ use jcabi-http here, but github defines all the extra deps we need desperately
