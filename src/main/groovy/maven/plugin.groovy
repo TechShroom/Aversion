@@ -4,24 +4,22 @@ import org.gradle.api.tasks.*
 import org.gradle.api.artifacts.ProjectDependency
 class plugin implements Plugin<Project> {
     void apply(Project project) {
-        project.extensions.create("mavencfg", PluginExtension)
+        def cfg = project.extensions.create("mavencfg", PluginExtension, project)
         project.apply plugin: 'maven'
         project.afterEvaluate {
-            if (project.mavencfg.gitio) {
+            if (cfg.snapshotRepo) {
                 project.uploadArchives {
                     repositories {
                         mavenDeployer {
-                            repository(url: project.file("../Techshroom.github.io/downloads/maven").toURI().toURL())
+                            snapshotRepository(url: cfg.snapshotRepo)
                         }
                     }
                 }
             }
-            project.mavencfg.otherLocations.each {
-                project.uploadArchives {
-                    repositories {
-                        mavenDeployer {
-                            repository(url: it)
-                        }
+            project.uploadArchives {
+                repositories {
+                    mavenDeployer {
+                        repository(url: cfg.repo)
                     }
                 }
             }

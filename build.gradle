@@ -13,6 +13,23 @@ buildscript {
     dependencies {
         classpath group: 'com.techshroom', name: 'Aversion', version: '1.0.1-SNAPSHOT'
     }
+    configurations.all {
+        resolutionStrategy {
+            // fail eagerly on version conflict (includes transitive dependencies)
+            // e.g. multiple different versions of the same dependency (group and name are equal)
+            failOnVersionConflict()
+
+            force 'com.jcabi:jcabi-aspects:0.17.1'
+            force 'com.jcabi:jcabi-immutable:1.2'
+            force 'com.jcabi:jcabi-log:0.14.1'
+            force 'com.jcabi:jcabi-manifests:1.0.3'
+            force 'org.aspectj:aspectjrt:1.8.1'
+
+            cacheDynamicVersionsFor 10, 'minutes'
+            // don't cache changing modules at all
+            cacheChangingModulesFor 0, 'seconds'
+        }
+    }
 }
 repositories {
     mavenCentral()
@@ -30,8 +47,5 @@ dependencies {
     compile group: 'com.jimdo.gradle', name: 'gradle-apt-plugin', version: '0.5+'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
 }
-apply plugin: 'aversion-maven'
 
-mavencfg {
-    gitio = true
-}
+apply plugin: 'aversion-maven'
