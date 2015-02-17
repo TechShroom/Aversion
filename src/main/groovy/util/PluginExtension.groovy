@@ -3,7 +3,7 @@ import org.gradle.api.*;
 class PluginExtension {
     static final String DEFAULT_VERSION = "PROJECT"
     def projectVersion = null
-    String javaVersion = DEFAULT_VERSION // specific java version
+    def javaVersion = DEFAULT_VERSION // specific java version
     boolean isMultiProject = false
     boolean applyEclipseFix = true
     void apply(Project project, plugin plugin) {
@@ -15,8 +15,7 @@ class PluginExtension {
             } else if (javaVersion instanceof CharSequence) {
                 def both = javaVersion.toString()
                 javaVersion = [src: both, target: both]
-            }
-            if (javaVersion instanceof String) {
+            } else {
                 throw new InvalidUserDataException("Couldn't convert " + javaVersion + " to a list, class type " + javaVersion.getClass().name)
             }
             plugin.applyEclipseClasspathMod(project, this)
