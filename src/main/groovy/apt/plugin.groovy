@@ -14,12 +14,12 @@ public class plugin implements Plugin<Project> {
             }
             project.addAPTReq(artifactMap)
         }
-        project.ext.addAPTProject = { project ->
+        project.ext.addAPTProject = { projectDep ->
             project.dependencies {
-                compile project
-                apt project
+                compile projectDep
+                apt projectDep
             }
-            project.addAPTReq(name: project.name)
+            project.addAPTReq(name: projectDep.name)
         }
         project.ext.addAPTReqWComp = { artifactMap ->
             project.dependencies {
