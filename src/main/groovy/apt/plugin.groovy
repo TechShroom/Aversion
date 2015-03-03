@@ -9,11 +9,17 @@ public class plugin implements Plugin<Project> {
 
         project.ext.addAPT = { artifactMap ->
             project.dependencies {
-                println artifactMap
                 compile artifactMap
                 apt artifactMap
             }
             project.addAPTReq(artifactMap)
+        }
+        project.ext.addAPTProject = { project ->
+            project.dependencies {
+                compile project
+                apt project
+            }
+            project.addAPTReq(name: project.name)
         }
         project.ext.addAPTReqWComp = { artifactMap ->
             project.dependencies {
