@@ -39,15 +39,10 @@ repositories {
 }
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
+apply plugin: 'aversion-util'
 
-def compat = '1.6'
-compileJava {
-    targetCompatibility = compat
-    sourceCompatibility = compat
-}
-compileGroovy {
-    targetCompatibility = compat
-    sourceCompatibility = compat
+util {
+    javaVersion = '1.6'
 }
 
 dependencies {

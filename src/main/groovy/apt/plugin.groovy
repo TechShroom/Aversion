@@ -34,11 +34,11 @@ public class plugin implements Plugin<Project> {
             mustRunAfter 'cleanCopyInAPTThings'
             description "Copies apt libraries to an appropriate directory for adding to Eclipse."
             ext.outputDir = "libs/apt"
-            inputs.files(project.configurations.compile)
+            inputs.files(project.configurations.apt)
             outputs.dir(outputDir)
             doLast {
                 project.copy {
-                    def copythis = []
+                    /*def copythis = []
                     def artifacts = project.configurations.compile.resolvedConfiguration.resolvedArtifacts
                     .each {
                         println "${project.name}:${it.moduleVersion.id}"
@@ -48,7 +48,8 @@ public class plugin implements Plugin<Project> {
                     }
                     copythis.each {
                         from it
-                    }
+                    }*/
+                    from project.configurations.apt
                     into outputDir
                 }
             }
@@ -57,7 +58,7 @@ public class plugin implements Plugin<Project> {
         project.task("writeFactoryPathFile", dependsOn: 'copyInAPTThings') {
             mustRunAfter 'cleanWriteFactoryPathFile'
             description "Writes the factory path for Eclipse"
-            ext.outputFile = ".factorypath"
+            ext.factoryFile = ".factorypath"
             inputs.file(project.copyInAPTThings.outputs.getFiles().iterator().next())
             doLast {
                 def cwd = project.buildDir.getAbsoluteFile().getParentFile().getAbsolutePath()
@@ -69,15 +70,31 @@ public class plugin implements Plugin<Project> {
                     }
                 }
                 xml = '<factorypath>\n' + xml + '</factorypath>'
-                project.file(outputFile).withWriter { w ->
+                project.file(factoryFile).withWriter { w ->
                     w.writeLine(xml)
                 }
             }
         }
         
+        project.eclipse.classpath.file {
+            withXml {
+                def node = it.asNode()
+                def attrNode = node.appendNode('classpathentry', ['kind': 'src', 'path': '.apt_generated'])
+                    .appendNode('attributes');
+                attrNode.appendNode('attribute', ['name': 'ignore_optional_problems', 'value': 'true']);
+                attrNode.appendNode('attribute', ['name': 'optional', 'value': 'true']);
+            }
+        }
+
         project.task("cleanWriteFactoryPathFile", type: Delete) {
             description "Cleans writeFactoryPathFile"
             delete ".factorypath"
+        }
+
+        project.eclipse.jdt.file {
+            withProperties { props ->
+                props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
+            }
         }
 
         project.cleanEclipseClasspath.dependsOn(project.cleanWriteFactoryPathFile)
