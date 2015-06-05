@@ -12,6 +12,11 @@ class plugin implements Plugin<Project> {
         eclipse.classpath.containers cp
         eclipse.jdt.sourceCompatibility = cJava.sourceCompatibility = ext.javaVersion['src']
         eclipse.jdt.targetCompatibility = cJava.targetCompatibility = ext.javaVersion['target']
+        if (project.plugins.hasPlugin('groovy')) {
+            def cGroovy = project.tasks.getByName('compileGroovy')
+            cGroovy.sourceCompatibility = ext.javaVersion['src']
+            cGroovy.targetCompatibility = ext.javaVersion['target']
+        }
     }
     void apply(Project project) {
         def ext = project.extensions.create('util', PluginExtension)
@@ -19,7 +24,7 @@ class plugin implements Plugin<Project> {
         project.afterEvaluate {
             if (ext.applyEclipseFix) {
                 // eclipse bug workaround
-                project.tasks.eclipse.dependsOn('cleanEclipse')
+                project.tasks.eclipseClasspath.dependsOn('cleanEclipseClasspath')
             }
         }
         // return true if there is a property `prop` from Gradle, Java system properties, or environment, in that order.
