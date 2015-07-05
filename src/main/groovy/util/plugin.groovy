@@ -1,21 +1,24 @@
 package util
 import org.gradle.api.*
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.compile.*
+import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.artifacts.ProjectDependency
 class plugin implements Plugin<Project> {
     void applyEclipseClasspathMod(Project project, PluginExtension ext) {
         project.apply plugin: 'eclipse'
         def eclipse = project.eclipse
-        def cJava = project.tasks.getByName('compileJava')
+        def cJava = project.tasks.withType(JavaCompile)
+        def cGroovy = project.tasks.withType(GroovyCompile)
+        def cScala = project.tasks.withType(ScalaCompile)
         def cp ='org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-' + ext.javaVersion['target']
         eclipse.classpath.containers.clear()
         eclipse.classpath.containers cp
-        eclipse.jdt.sourceCompatibility = cJava.sourceCompatibility = ext.javaVersion['src']
-        eclipse.jdt.targetCompatibility = cJava.targetCompatibility = ext.javaVersion['target']
-        if (project.plugins.hasPlugin('groovy')) {
-            def cGroovy = project.tasks.getByName('compileGroovy')
-            cGroovy.sourceCompatibility = ext.javaVersion['src']
-            cGroovy.targetCompatibility = ext.javaVersion['target']
+        eclipse.jdt.sourceCompatibility = ext.javaVersion['src']
+        eclipse.jdt.targetCompatibility = ext.javaVersion['target']
+        (cJava + cGroovy + cScala).each { t ->
+            t.sourceCompatibility = ext.javaVersion['src']
+            t.targetCompatibility = ext.javaVersion['target']
         }
     }
     void apply(Project project) {
