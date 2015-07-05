@@ -6,12 +6,16 @@ class plugin implements Plugin<Project> {
     void applyEclipseClasspathMod(Project project, PluginExtension ext) {
         project.apply plugin: 'eclipse'
         def eclipse = project.eclipse
-        def cJava = project.tasks.getByName('compileJava')
+        def cJava = project.tasks.withType(JavaCompile)
         def cp ='org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-' + ext.javaVersion['target']
         eclipse.classpath.containers.clear()
         eclipse.classpath.containers cp
-        eclipse.jdt.sourceCompatibility = cJava.sourceCompatibility = ext.javaVersion['src']
-        eclipse.jdt.targetCompatibility = cJava.targetCompatibility = ext.javaVersion['target']
+        eclipse.jdt.sourceCompatibility = ext.javaVersion['src']
+        eclipse.jdt.targetCompatibility = ext.javaVersion['target']
+        cJava.each { t ->
+            t.sourceCompatibility = ext.javaVersion['src']
+            t.targetCompatibility = ext.javaVersion['target']
+        }
     }
     void apply(Project project) {
         def ext = project.extensions.create('util', PluginExtension)
