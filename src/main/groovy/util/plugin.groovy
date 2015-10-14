@@ -6,6 +6,7 @@ import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.artifacts.ProjectDependency
 class plugin implements Plugin<Project> {
     void applyEclipseClasspathMod(Project project, PluginExtension ext) {
+        project.apply plugin: 'java'
         project.apply plugin: 'eclipse'
         def eclipse = project.eclipse
         def cJava = project.tasks.withType(JavaCompile)
