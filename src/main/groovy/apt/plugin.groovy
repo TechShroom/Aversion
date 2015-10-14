@@ -4,7 +4,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.artifacts.ProjectDependency
 public class plugin implements Plugin<Project> {
     void apply(Project project) {
-        project.apply plguin: 'java'
+        project.apply plugin: 'java'
         project.apply plugin: 'eclipse'
         project.apply plugin: 'apt'
         project.ext.artifactMaps = [:]
