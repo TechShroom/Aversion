@@ -67,7 +67,7 @@ public class plugin implements Plugin<Project> {
                 def xml = ''
                 inputs.getFiles().each { dir ->
                     dir.listFiles().each { file ->
-                        def relToHere = file.toString().replace(cwd, "/${project.name}").replace('\\', '/')
+                        def relToHere = file.toString().replace(cwd, "/${project.projectDir}").replace('\\', '/')
                         xml = "${xml}    <factorypathentry kind=\"WKSPJAR\" id=\"${relToHere}\" enabled=\"true\" runInBatchMode=\"false\"/>\n"
                     }
                 }
