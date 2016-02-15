@@ -6,6 +6,7 @@ class PluginExtension {
     def javaVersion = DEFAULT_VERSION // specific java version
     boolean isMultiProject = false
     boolean applyEclipseFix = true
+    List<String> extraContainers = []
     void apply(Project project, plugin plugin) {
         isMultiProject = !project.subprojects.isEmpty()
         project.afterEvaluate {
