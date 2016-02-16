@@ -15,7 +15,7 @@ class plugin implements Plugin<Project> {
         def cp ='org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-' + ext.javaVersion['target']
         eclipse.classpath.containers.clear()
         eclipse.classpath.containers cp
-        eclipse.classpath.containers ext.extraContainers
+        eclipse.classpath.containers.addAll(ext.extraContainers)
         eclipse.jdt.sourceCompatibility = ext.javaVersion['src']
         eclipse.jdt.targetCompatibility = ext.javaVersion['target']
         (cJava + cGroovy + cScala).each { t ->
