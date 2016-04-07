@@ -7,7 +7,7 @@ class PluginExtension {
     boolean isMultiProject = false
     boolean applyEclipseFix = true
     List<String> extraContainers = []
-    void apply(Project project, plugin plugin) {
+    void apply(Project project, UtilPlugin plugin) {
         isMultiProject = !project.subprojects.isEmpty()
         project.afterEvaluate {
             projectVersion = checkVersion(project)

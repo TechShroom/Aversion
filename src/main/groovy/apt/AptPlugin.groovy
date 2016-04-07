@@ -2,7 +2,7 @@ package apt
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.artifacts.ProjectDependency
-public class plugin implements Plugin<Project> {
+public class AptPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'java'
         project.apply plugin: 'eclipse'
