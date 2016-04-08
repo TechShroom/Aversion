@@ -17,10 +17,9 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_17815da8492b_key -iv $encrypted_17815da8492b_iv -in setup-travis.sh.enc -out setup-travis.sh -d
 - chmod +x setup-travis.sh
 - ./setup-travis.sh
-- pip install --user codecov
 after_success:
-- codecov
-- test $TRAVIS_PULL_REQUEST == false && test $TRAVIS_BRANCH == master && ./gradlew
+# test TPR == false && (TB == dev/version/* || TB == master)
+- test $TRAVIS_PULL_REQUEST == false -a \( $TRAVIS_BRANCH == 'dev/version/*' -o $TRAVIS_BRANCH == 'master' \) && ./gradlew
   uploadArchives -PossrhUsername=kenzierocks
 after_script:
 - "./gradlew --stop"
