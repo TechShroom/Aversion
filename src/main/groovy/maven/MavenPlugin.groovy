@@ -1,24 +1,25 @@
 package maven
 import org.gradle.api.*
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.artifacts.ProjectDependency
 class MavenPlugin implements Plugin<Project> {
     void apply(Project project) {
         // Add source/jd tasks
         project.apply plugin: 'java'
-        task sourcesJar(type: Jar, dependsOn: classes) {
+        project.task('sourcesJar', type: Jar, dependsOn: project.classes) {
             classifier = 'sources'
-            from sourceSets.main.allSource
+            from project.sourceSets.main.allSource
         }
 
-        task javadocJar(type: Jar, dependsOn: javadoc) {
+        project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
             classifier = 'javadoc'
-            from javadoc.destinationDir
+            from project.javadoc.destinationDir
         }
 
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
+        project.artifacts {
+            archives project.sourcesJar
+            archives project.javadocJar
         }
 
         def cfg = project.extensions.create("mavencfg", PluginExtension, project)
@@ -28,11 +29,12 @@ class MavenPlugin implements Plugin<Project> {
         }
         // skip everything if data missing
         if (!(project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword') && project.property('ossrhPassword'))) {
+            println('[aversion-maven] Missing data, aborting configuring maven uploads.')
             return;
         }
 
         project.plugins.withId('net.researchgate.release') {
-            project.afterReleaseBuild.dependsOn uploadArchives
+            project.afterReleaseBuild.dependsOn(project.uploadArchives)
         }
         println("[aversion-maven] username:password=${project.ossrhUsername}:REDACTED")
         project.apply plugin: 'maven'
@@ -71,7 +73,7 @@ class MavenPlugin implements Plugin<Project> {
                             licenses {
                                 license {
                                     name 'The MIT License'
-                                    url "https://github.com${project.coord}/blob/master/LICENSE"
+                                    url "https://github.com${cfg.coord}/blob/master/LICENSE"
                                 }
                             }
 
@@ -89,12 +91,12 @@ class MavenPlugin implements Plugin<Project> {
             if (cfg.doSigning) {
                 project.apply plugin: 'signing'
                 project.signing {
-                    sign configurations.archives
+                    sign project.configurations.archives
                 }
-                uploadArchives {
+                project.uploadArchives {
                     repositories {
                         mavenDeployer {
-                            beforeDeployment { deployment -> signing.signPom(deployment) }
+                            beforeDeployment { deployment -> project.signing.signPom(deployment) }
                         }
                     }
                 }
