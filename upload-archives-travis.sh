@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # because YAML sux with bash syntax
-if [[ $TRAVIS_PULL_REQUEST == false ]]; then
+if [[ $TRAVIS_PULL_REQUEST == true ]]; then
     echo 'Aborting due to PR status.'
     exit 0
 fi
