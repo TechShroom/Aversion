@@ -19,7 +19,6 @@ before_install:
 - ./setup-travis.sh
 after_success:
 # test TPR == false && (TB == dev/version/* || TB == master)
-- [[ $TRAVIS_PULL_REQUEST == false ]] && { [[ $TRAVIS_BRANCH == 'dev/version/'* ]] || [[ $TRAVIS_BRANCH == 'master' ]] } &&
-                                                                        ./gradlew uploadArchives -PossrhUsername=kenzierocks
+- [[ $TRAVIS_PULL_REQUEST == false ]] && { [[ $TRAVIS_BRANCH == 'dev/version/'* ]] || [[ $TRAVIS_BRANCH == 'master' ]] } && ./gradlew uploadArchives -PossrhUsername=kenzierocks
 after_script:
 - "./gradlew --stop"
