@@ -1,17 +1,27 @@
 package util
 import org.gradle.api.*
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.compile.*
+import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.artifacts.ProjectDependency
-class plugin implements Plugin<Project> {
+class UtilPlugin implements Plugin<Project> {
     void applyEclipseClasspathMod(Project project, PluginExtension ext) {
+        project.apply plugin: 'java'
         project.apply plugin: 'eclipse'
         def eclipse = project.eclipse
-        def cJava = project.tasks.getByName('compileJava')
+        def cJava = project.tasks.withType(JavaCompile)
+        def cGroovy = project.tasks.withType(GroovyCompile)
+        def cScala = project.tasks.withType(ScalaCompile)
         def cp ='org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-' + ext.javaVersion['target']
         eclipse.classpath.containers.clear()
         eclipse.classpath.containers cp
-        eclipse.jdt.sourceCompatibility = cJava.sourceCompatibility = ext.javaVersion['src']
-        eclipse.jdt.targetCompatibility = cJava.targetCompatibility = ext.javaVersion['target']
+        eclipse.classpath.containers.addAll(ext.extraContainers)
+        eclipse.jdt.sourceCompatibility = ext.javaVersion['src']
+        eclipse.jdt.targetCompatibility = ext.javaVersion['target']
+        (cJava + cGroovy + cScala).each { t ->
+            t.sourceCompatibility = ext.javaVersion['src']
+            t.targetCompatibility = ext.javaVersion['target']
+        }
     }
     void apply(Project project) {
         def ext = project.extensions.create('util', PluginExtension)
@@ -19,7 +29,7 @@ class plugin implements Plugin<Project> {
         project.afterEvaluate {
             if (ext.applyEclipseFix) {
                 // eclipse bug workaround
-                project.tasks.eclipse.dependsOn('cleanEclipse')
+                project.tasks.eclipseClasspath.dependsOn('cleanEclipseClasspath')
             }
         }
         // return true if there is a property `prop` from Gradle, Java system properties, or environment, in that order.

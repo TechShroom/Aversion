@@ -1,35 +1,5 @@
-group = "com.techshroom"
-version = "1.0.1-SNAPSHOT"
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        maven {
-            url "http://techshroom.github.io/downloads/maven"
-        }
-    }
-    dependencies {
-        classpath group: 'com.techshroom', name: 'Aversion', version: '1.0.1-SNAPSHOT'
-    }
-    configurations.all {
-        resolutionStrategy {
-            // fail eagerly on version conflict (includes transitive dependencies)
-            // e.g. multiple different versions of the same dependency (group and name are equal)
-            failOnVersionConflict()
-
-            force 'com.jcabi:jcabi-aspects:0.17.1'
-            force 'com.jcabi:jcabi-immutable:1.2'
-            force 'com.jcabi:jcabi-log:0.14.1'
-            force 'com.jcabi:jcabi-manifests:1.0.3'
-            force 'org.aspectj:aspectjrt:1.8.1'
-
-            cacheDynamicVersionsFor 10, 'minutes'
-            // don't cache changing modules at all
-            cacheChangingModulesFor 0, 'seconds'
-        }
-    }
+plugins {
+    id 'net.researchgate.release' version '2.3.5'
 }
 repositories {
     mavenCentral()
@@ -40,15 +10,10 @@ repositories {
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
 
-def compat = '1.6'
-compileJava {
-    targetCompatibility = compat
-    sourceCompatibility = compat
-}
-compileGroovy {
-    targetCompatibility = compat
-    sourceCompatibility = compat
-}
+compileGroovy.targetCompatibility = '1.8'
+compileGroovy.sourceCompatibility = '1.8'
+
+group = "com.techshroom"
 
 dependencies {
     compile localGroovy()
@@ -58,4 +23,107 @@ dependencies {
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
 }
 
-apply plugin: 'aversion-maven'
+/*
+
+TAKEN FROM MAVENPLUGIN.GROOVY!
+IF THAT'S UPDATED, THIS MIGHT NEED UPDATING TOO!
+
+*/
+
+// Add source/jd tasks
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+if (!project.hasProperty('ossrhPassword')) {
+    project.ext.ossrhPassword = System.getenv('PASSWORD');
+    println('Captured password from $PASSWORD')
+}
+// skip everything if data missing
+if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword') && project.property('ossrhPassword')) {
+    project.plugins.withId('net.researchgate.release') {
+        project.afterReleaseBuild.dependsOn uploadArchives
+    }
+    println("[aversion-maven] username:password=${project.ossrhUsername}:REDACTED")
+    ext.coord = 'TechShroom/Aversion'
+    ext.doSigning = !Boolean.parseBoolean(System.getenv('TRAVIS'))
+    project.apply plugin: 'maven'
+    if (doSigning) {
+        project.apply plugin: 'signing'
+        project.signing {
+            sign configurations.archives
+        }
+    } else {
+        uploadArchives.onlyIf { project.version.endsWith('-SNAPSHOT') }
+    }
+    project.afterEvaluate {
+            project.uploadArchives {
+                repositories {
+                    mavenDeployer {
+                    }
+                }
+            }
+        project.uploadArchives {
+            repositories {
+                mavenDeployer {
+                    if (doSigning) {
+                        beforeDeployment { deployment -> signing.signPom(deployment) }
+                    }
+                    repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                        authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
+                    }
+                    snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                        authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
+                    }
+
+                    pom.project {
+                        name project.name
+                        packaging 'jar'
+                        description 'Common Gradle Config for TechShroom'
+                        url 'https://github.com' + project.coord
+
+                        scm {
+                            connection 'git://github.com' + project.coord
+                            developerConnection 'git://github.com' + project.coord
+                            url 'https://github.com' + project.coord
+                        }
+
+                        licenses {
+                            license {
+                                name 'The MIT License'
+                                url "https://github.com${project.coord}/blob/master/LICENSE"
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'kenzierocks'
+                                name 'Kenzie Togami'
+                                email 'ket1999@gmail.com'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (doSigning) {
+            uploadArchives {
+                repositories {
+                    mavenDeployer {
+                    }
+                }
+            }
+        }
+    }
+}

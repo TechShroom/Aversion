@@ -1,17 +1,36 @@
 package maven
 import org.gradle.api.*
 class PluginExtension {
+    boolean doSigning = false
     String repo = null
     String snapshotRepo = null
+    String projectDescription = null
+    String coord = null
     private Project project
     public PluginExtension(Project project) {
         this.project = project
-        repoFile = "../downloads/maven"
+        this.doSigning = !Boolean.parseBoolean(System.getenv('TRAVIS'))
+        this.repo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        this.snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     void setRepoFile(file) {
         repo = project.file(file).toURI().toURL()
     }
     void setSnapshotRepoFile(file) {
         snapshotRepo = project.file(file).toURI().toURL()
+    }
+    void description(desc) {
+        projectDescription = desc
+    }
+    void coords(owner, repo) {
+        coord = "${owner}/${repo}"
+    }
+    void validate() {
+        if (coord == null) {
+            throw new IllegalArgumentException("Coords must be set (mavencfg.coords)");
+        }
+        if (projectDescription == null) {
+            throw new IllegalArgumentException("Description must be set (mavencfg.description)");
+        }
     }
 }

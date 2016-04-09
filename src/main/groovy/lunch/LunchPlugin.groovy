@@ -5,7 +5,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.artifacts.ProjectDependency
 import org.jsoup.*
 import org.jsoup.parser.*
-public class plugin implements Plugin<Project> {
+public class LunchPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.ext.resolveDepURL = { dep ->
             def search = project.repositories
