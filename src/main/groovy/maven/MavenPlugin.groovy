@@ -36,6 +36,10 @@ class MavenPlugin implements Plugin<Project> {
         project.plugins.withId('net.researchgate.release') {
             project.afterReleaseBuild.dependsOn(project.uploadArchives)
         }
+        if (!project.version.endsWith('-SNAPSHOT') && Boolean.parseBoolean(System.getenv('TRAVIS'))) {
+            println('Disabling uploads for non-SNAPSHOT Travis build.')
+            project.uploadArchives.onlyIf { false }
+        }
         println("[aversion-maven] username:password=${project.ossrhUsername}:REDACTED")
         project.apply plugin: 'maven'
         project.afterEvaluate {

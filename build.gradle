@@ -64,6 +64,8 @@ if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')
         project.signing {
             sign configurations.archives
         }
+    } else {
+        uploadArchives.onlyIf { project.version.endsWith('-SNAPSHOT') }
     }
     project.afterEvaluate {
             project.uploadArchives {
