@@ -4,6 +4,10 @@ plugins {
 repositories {
     mavenCentral()
     maven {
+        name 'gradle plugins'
+        url 'https://plugins.gradle.org/m2/'
+    }
+    maven {
         url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 }
@@ -19,7 +23,7 @@ dependencies {
     compile localGroovy()
     // we _would_ use jcabi-http here, but github defines all the extra deps we need desperately
     compile group: 'com.jcabi', name: 'jcabi-github', version: '0.14'
-    compile group: 'com.jimdo.gradle', name: 'gradle-apt-plugin', version: '0.6'
+    compile group: 'net.ltgt.gradle', name: 'gradle-apt-plugin', version: '0.6'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
 }
 
