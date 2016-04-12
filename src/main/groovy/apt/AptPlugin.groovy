@@ -6,7 +6,7 @@ public class AptPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'java'
         project.apply plugin: 'eclipse'
-        project.apply plugin: 'apt'
+        project.apply plugin: 'net.ltgt.apt'
         project.ext.artifactMaps = [:]
 
         project.ext.addAPT = { artifactMap ->
