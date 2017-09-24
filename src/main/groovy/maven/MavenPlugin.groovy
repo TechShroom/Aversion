@@ -3,6 +3,7 @@ import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.artifacts.ProjectDependency
+
 class MavenPlugin implements Plugin<Project> {
     void apply(Project project) {
         // Add source/jd tasks
@@ -44,19 +45,23 @@ class MavenPlugin implements Plugin<Project> {
         project.afterEvaluate {
             cfg.validate();
             def installer = project.install.repositories.mavenInstaller;
+            project.uploadArchives.repositories {
+                mavenDeployer {}
+            }
             def deployer = project.uploadArchives.repositories.mavenDeployer;
             if (cfg.snapshotRepo) {
-                project.project.configure([installer, deployer]) {
+                project.project.configure([deployer]) {
                     snapshotRepository(url: cfg.snapshotRepo) {
                         authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
                     }
                 }
             }
-            project.configure([installer, deployer]) {
+            project.configure([deployer]) {
                 repository(url: cfg.repo) {
                     authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
                 }
-
+            }
+            project.configure([installer, deployer]) {
                 pom.project {
                     name cfg.artifactName
                     if (cfg.artifactClassifier) {
@@ -93,7 +98,7 @@ class MavenPlugin implements Plugin<Project> {
                 project.signing {
                     sign project.configurations.archives
                 }
-                project.configure([installer, deployer]) {
+                project.configure([deployer]) {
                     beforeDeployment { deployment -> project.signing.signPom(deployment) }
                 }
             }

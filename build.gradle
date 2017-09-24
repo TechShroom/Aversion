@@ -28,19 +28,21 @@ dependencies {
 }
 
 String prepareMavenPlugin(project) {
-    def data = project.file('src/main/groovy/maven/MavenPlugin.groovy').filterLine { line ->
+    def mavenLines = (project.file("src/main/groovy/maven/MavenPlugin.groovy")
+        .collect().drop(8).dropRight(2));
+    def extLines = project.file("src/main/groovy/maven/PluginExtension.groovy").findAll { line ->
         return !line.startsWith('package')
     };
-    def ret = project.file('build/MavenPluginStripped.groovy');
+    def ret = project.file("build/MavenPluginStripped.groovy");
     ret.parentFile.mkdirs()
-    ret.newWriter().with { writer ->
-        data.writeTo(writer)
+    ret.withWriter { writer ->
+        extLines.each { writer.write(it + '\n') }
+        mavenLines.each { writer.write(it + '\n') }
     }
     return ret.toString()
 }
 
-apply from: prepareMavenPlugin(project), to: project
-apply plugin: MavenPlugin
+apply from: prepareMavenPlugin(project)
 
 mavencfg {
     coords 'TechShroom', 'Aversion'

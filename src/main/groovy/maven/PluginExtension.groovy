@@ -14,7 +14,7 @@ class PluginExtension {
         this.doSigning = !Boolean.parseBoolean(System.getenv('TRAVIS'))
         this.repo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
         this.snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-        this.name = project.name
+        this.artifactName = project.name
     }
     void setRepoFile(file) {
         repo = project.file(file).toURI().toURL()
