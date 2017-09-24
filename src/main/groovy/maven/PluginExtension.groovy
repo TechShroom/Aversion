@@ -3,6 +3,7 @@ import org.gradle.api.*
 class PluginExtension {
     boolean doSigning = false
     String repo = null
+    String classifier = ""
     String snapshotRepo = null
     String projectDescription = null
     String coord = null
@@ -23,11 +24,14 @@ class PluginExtension {
         projectDescription = desc
     }
     void coords(owner, repo) {
-        coord = "${owner}/${repo}"
+        coord = "/${owner}/${repo}"
     }
     void validate() {
         if (coord == null) {
             throw new IllegalArgumentException("Coords must be set (mavencfg.coords)");
+        }
+        if (!coord.startsWith('/')) {
+            coord = '/' + coord
         }
         if (projectDescription == null) {
             throw new IllegalArgumentException("Description must be set (mavencfg.description)");

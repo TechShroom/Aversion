@@ -25,7 +25,6 @@ class MavenPlugin implements Plugin<Project> {
         def cfg = project.extensions.create("mavencfg", PluginExtension, project)
         if (!project.hasProperty('ossrhPassword')) {
             project.ext.ossrhPassword = System.getenv('PASSWORD');
-            println('Captured password from $PASSWORD')
         }
         // skip everything if data missing
         if (!(project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword') && project.property('ossrhPassword'))) {
@@ -44,50 +43,47 @@ class MavenPlugin implements Plugin<Project> {
         project.apply plugin: 'maven'
         project.afterEvaluate {
             cfg.validate();
+            def installer = project.install.repositories.mavenInstaller;
+            def deployer = project.uploadArchives.repositories.mavenDeployer;
             if (cfg.snapshotRepo) {
-                project.uploadArchives {
-                    repositories {
-                        mavenDeployer {
-                            snapshotRepository(url: cfg.snapshotRepo) {
-                                authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
-                            }
-                        }
+                project.project.configure([installer, deployer]) {
+                    snapshotRepository(url: cfg.snapshotRepo) {
+                        authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
                     }
                 }
             }
-            project.uploadArchives {
-                repositories {
-                    mavenDeployer {
-                        repository(url: cfg.repo) {
-                            authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
+            project.configure([installer, deployer]) {
+                repository(url: cfg.repo) {
+                    authentication(userName: project.ossrhUsername, password: project.ossrhPassword)
+                }
+
+                pom.project {
+                    name project.name
+                    if (cfg.classifier) {
+                        classifier cfg.classifier
+                    }
+                    packaging 'jar'
+                    description cfg.projectDescription
+                    url 'https://github.com' + cfg.coord
+
+                    scm {
+                        connection 'git://github.com' + cfg.coord
+                        developerConnection 'git://github.com' + cfg.coord
+                        url 'https://github.com' + cfg.coord
+                    }
+
+                    licenses {
+                        license {
+                            name 'The MIT License'
+                            url "https://github.com${cfg.coord}/blob/master/LICENSE"
                         }
+                    }
 
-                        pom.project {
-                            name project.name
-                            packaging 'jar'
-                            description cfg.projectDescription
-                            url 'https://github.com' + cfg.coord
-
-                            scm {
-                                connection 'git://github.com' + cfg.coord
-                                developerConnection 'git://github.com' + cfg.coord
-                                url 'https://github.com' + cfg.coord
-                            }
-
-                            licenses {
-                                license {
-                                    name 'The MIT License'
-                                    url "https://github.com${cfg.coord}/blob/master/LICENSE"
-                                }
-                            }
-
-                            developers {
-                                developer {
-                                    id 'kenzierocks'
-                                    name 'Kenzie Togami'
-                                    email 'ket1999@gmail.com'
-                                }
-                            }
+                    developers {
+                        developer {
+                            id 'kenzierocks'
+                            name 'Kenzie Togami'
+                            email 'ket1999@gmail.com'
                         }
                     }
                 }
@@ -97,12 +93,8 @@ class MavenPlugin implements Plugin<Project> {
                 project.signing {
                     sign project.configurations.archives
                 }
-                project.uploadArchives {
-                    repositories {
-                        mavenDeployer {
-                            beforeDeployment { deployment -> project.signing.signPom(deployment) }
-                        }
-                    }
+                project.configure([installer, deployer]) {
+                    beforeDeployment { deployment -> project.signing.signPom(deployment) }
                 }
             }
         }
