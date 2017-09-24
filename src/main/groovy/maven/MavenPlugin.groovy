@@ -64,9 +64,6 @@ class MavenPlugin implements Plugin<Project> {
             project.configure([installer, deployer]) {
                 pom.project {
                     name cfg.artifactName
-                    if (cfg.artifactClassifier) {
-                        classifier cfg.artifactClassifier
-                    }
                     packaging 'jar'
                     description cfg.projectDescription
                     url 'https://github.com' + cfg.coord

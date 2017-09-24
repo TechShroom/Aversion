@@ -3,7 +3,6 @@ import org.gradle.api.*
 class PluginExtension {
     boolean doSigning = false
     String repo = null
-    String artifactClassifier = ""
     String snapshotRepo = null
     String projectDescription = null
     String coord = null
