@@ -63,7 +63,7 @@ class MavenPlugin implements Plugin<Project> {
             }
             project.configure([installer, deployer]) {
                 pom.project {
-                    name cfg.artifactName
+                    name project.name
                     packaging 'jar'
                     description cfg.projectDescription
                     url 'https://github.com' + cfg.coord
@@ -89,6 +89,7 @@ class MavenPlugin implements Plugin<Project> {
                         }
                     }
                 }
+                pom.artifactId = cfg.artifactName
             }
             if (cfg.doSigning) {
                 project.apply plugin: 'signing'
