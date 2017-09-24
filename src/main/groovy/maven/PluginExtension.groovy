@@ -3,11 +3,11 @@ import org.gradle.api.*
 class PluginExtension {
     boolean doSigning = false
     String repo = null
-    String classifier = ""
+    String artifactClassifier = ""
     String snapshotRepo = null
     String projectDescription = null
     String coord = null
-    String name = null
+    String artifactName = null
     private Project project
     public PluginExtension(Project project) {
         this.project = project
@@ -32,8 +32,8 @@ class PluginExtension {
         if (coord == null) {
             throw new IllegalArgumentException("Coords must be set (mavencfg.coords)");
         }
-        if (name == null) {
-            throw new IllegalArgumentException("Name must be set (mavencfg.name)");
+        if (artifactName == null) {
+            throw new IllegalArgumentException("Name must be set (mavencfg.artifactName)");
         }
         if (!coord.startsWith('/')) {
             coord = '/' + coord

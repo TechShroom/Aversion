@@ -58,9 +58,9 @@ class MavenPlugin implements Plugin<Project> {
                 }
 
                 pom.project {
-                    name cfg.name
-                    if (cfg.classifier) {
-                        classifier cfg.classifier
+                    name cfg.artifactName
+                    if (cfg.artifactClassifier) {
+                        classifier cfg.artifactClassifier
                     }
                     packaging 'jar'
                     description cfg.projectDescription

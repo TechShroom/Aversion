@@ -41,3 +41,8 @@ String prepareMavenPlugin(project) {
 
 apply from: prepareMavenPlugin(project), to: project
 apply plugin: MavenPlugin
+
+mavencfg {
+    coords 'TechShroom', 'Aversion'
+    description 'Common Gradle Config for TechShroom'
+}
