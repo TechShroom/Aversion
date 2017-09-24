@@ -58,7 +58,7 @@ class MavenPlugin implements Plugin<Project> {
                 }
 
                 pom.project {
-                    name project.name
+                    name cfg.name
                     if (cfg.classifier) {
                         classifier cfg.classifier
                     }
