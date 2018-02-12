@@ -26,6 +26,11 @@ class UtilPlugin implements Plugin<Project> {
     void apply(Project project) {
         def ext = project.extensions.create('util', PluginExtension)
         ext.apply(project, this)
+        project.repositories {
+            mavenCentral()
+            maven { name = "Sonatype Releases"; url = 'https://oss.sonatype.org/content/repositories/releases/' }
+            maven { name = "Sonatype Snapshots"; url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        }
         project.afterEvaluate {
             if (ext.applyEclipseFix) {
                 // eclipse bug workaround
